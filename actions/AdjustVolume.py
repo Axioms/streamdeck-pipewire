@@ -19,11 +19,9 @@ class AdjustVolume(ActionCore):
         self.has_configuration = True
         self.Volume = "N/A"
         self.ApplicationName = ""
+        self.bounds = "100"
+        self.multiplier = "1"
         self.create_generative_ui()
-
-        if len(self.ApplicationName) > 0:
-            applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
-            self.Volume = audioUtils.GetVolume(applicationIDs)
 
         self.create_event_listener()
 
@@ -101,9 +99,12 @@ class AdjustVolume(ActionCore):
             applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
 
             audioLevel = audioUtils.GetVolume(applicationIDs)
-            self.Volume = self.multiplier * (modifier + audioLevel)
+            self.Volume = self.limit_to_bounds(
+                int(self.multiplier) * modifier + audioLevel)
+            print(self.Volume)
+            print(self.limit_to_bounds(self.Volume))
             audioUtils.SetVolume(
-                applicationIDs, self.limit_to_bounds(self.Volume))
+                applicationIDs, self.Volume)
             self.on_update()
             return
 
@@ -112,30 +113,33 @@ class AdjustVolume(ActionCore):
             self.show_error(1)
 
     def dispaly_volume(self):
-        if not self.action_name:
+        if not self.Volume:
             return
-        applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
-        self.Volume = audioUtils.GetVolume(applicationIDs)
 
         self.set_center_label(str(self.Volume))
 
     def on_update(self):
         self.dispaly_volume()
-        self.display_icon()
         # self.display_icon()
         return
 
     def on_tick(self):
-        self.dispaly_volume()
+        if len(self.ApplicationName) > 0:
+            applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
+            tempVol = audioUtils.GetVolume(applicationIDs)
+            if self.Volume == "N/A" or tempVol != int(self.Volume):
+                self.Volume = tempVol
+                self.dispaly_volume()
         # self.display_icon()
         return
 
     def on_ready(self):
+
         self.on_update()
 
     def limit_to_bounds(self, volume) -> int:
         if volume < 0:
             return 0
-        elif volume > self.bounds:
-            return self.bounds
+        elif volume > int(self.bounds):
+            return int(self.bounds)
         return volume

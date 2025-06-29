@@ -44,7 +44,7 @@ class PluginTemplate(PluginBase):
         self.register(
             plugin_name="Pipewire Application Mixer",
             github_repo="https://github.com/Axioms/streamdeck-pipewire",
-            plugin_version="1.0.0",
+            plugin_version="1.0.1",
             app_version="1.1.1-alpha"
         )
 
