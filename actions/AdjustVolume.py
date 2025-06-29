@@ -99,12 +99,13 @@ class AdjustVolume(ActionCore):
             applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
 
             audioLevel = audioUtils.GetVolume(applicationIDs)
-            self.Volume = self.limit_to_bounds(
+            Volume = self.limit_to_bounds(
                 int(self.multiplier) * modifier + audioLevel)
             print(self.Volume)
             print(self.limit_to_bounds(self.Volume))
             audioUtils.SetVolume(
-                applicationIDs, self.Volume)
+                applicationIDs, Volume)
+            self.Volume = audioLevel
             self.on_update()
             return
 
@@ -129,12 +130,11 @@ class AdjustVolume(ActionCore):
             tempVol = audioUtils.GetVolume(applicationIDs)
             if self.Volume == "N/A" or tempVol != int(self.Volume):
                 self.Volume = tempVol
-                self.dispaly_volume()
+        self.dispaly_volume()
         # self.display_icon()
         return
 
     def on_ready(self):
-
         self.on_update()
 
     def limit_to_bounds(self, volume) -> int:
