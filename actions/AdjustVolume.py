@@ -16,11 +16,12 @@ from ..globals import Icons
 class AdjustVolume(ActionCore):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        settings = self.get_settings()
         self.has_configuration = True
         self.Volume = "N/A"
-        self.ApplicationName = ""
-        self.bounds = "100"
-        self.multiplier = "1"
+        self.ApplicationName = settings.get("application-name",  "")
+        self.bounds = int(100 * float(settings.get("volume-adjust", "1.0")))
+        self.multiplier = settings.get("multiplier", "1")
         self.create_generative_ui()
 
         self.create_event_listener()
@@ -37,7 +38,7 @@ class AdjustVolume(ActionCore):
 
         self.volume_multiplier_scale = ScaleRow(
             action_core=self,
-            var_name="volume-adjust",
+            var_name="multiplier",
             default_value=1,
             min=1,
             max=100,
@@ -95,16 +96,17 @@ class AdjustVolume(ActionCore):
         self.bounds = value
 
     def adjust_volume(self, modifier):
+        if self.Volume == "N/A":
+            return
         try:
             applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
 
             audioLevel = audioUtils.GetVolume(applicationIDs)
-            Volume = self.limit_to_bounds(
+            self.Volume = self.limit_to_bounds(
                 int(self.multiplier) * modifier + audioLevel)
             audioUtils.SetVolume(
-                applicationIDs, Volume)
-            self.Volume = audioLevel
-            self.on_update()
+                applicationIDs, self.Volume)
+            self.dispaly_volume()
             return
 
         except Exception as e:
@@ -123,18 +125,20 @@ class AdjustVolume(ActionCore):
         return
 
     def on_tick(self):
-        if len(self.ApplicationName) > 0:
+        if self.Volume == "N/A" and len(self.ApplicationName) > 0:
             applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
             if (applicationIDs[0] == -1):
                 return
-            tempVol = audioUtils.GetVolume(applicationIDs)
-            if self.Volume == "N/A" or tempVol != int(self.Volume):
-                self.Volume = tempVol
-        self.dispaly_volume()
+            self.Volume = audioUtils.GetVolume(applicationIDs)
+            self.dispaly_volume()
         # self.display_icon()
         return
 
     def on_ready(self):
+        settings = self.get_settings()
+        self.ApplicationName = settings.get("application-name",  "")
+        self.bounds = int(100 * float(settings.get("volume-adjust", "1.0")))
+        self.multiplier = settings.get("multiplier", "1")
         self.on_update()
 
     def limit_to_bounds(self, volume) -> int:
