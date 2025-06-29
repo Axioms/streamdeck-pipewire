@@ -101,8 +101,6 @@ class AdjustVolume(ActionCore):
             audioLevel = audioUtils.GetVolume(applicationIDs)
             Volume = self.limit_to_bounds(
                 int(self.multiplier) * modifier + audioLevel)
-            print(self.Volume)
-            print(self.limit_to_bounds(self.Volume))
             audioUtils.SetVolume(
                 applicationIDs, Volume)
             self.Volume = audioLevel
