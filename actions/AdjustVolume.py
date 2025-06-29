@@ -125,6 +125,8 @@ class AdjustVolume(ActionCore):
     def on_tick(self):
         if len(self.ApplicationName) > 0:
             applicationIDs = audioUtils.GetNodeID(self.ApplicationName)
+            if (applicationIDs[0] == -1):
+                return
             tempVol = audioUtils.GetVolume(applicationIDs)
             if self.Volume == "N/A" or tempVol != int(self.Volume):
                 self.Volume = tempVol
