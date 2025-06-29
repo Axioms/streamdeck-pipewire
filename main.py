@@ -7,9 +7,11 @@ from gi.repository import Gtk
 from src.backend.PluginManager.PluginBase import PluginBase
 from src.backend.PluginManager.ActionHolder import ActionHolder
 from src.backend.DeckManagement.ImageHelpers import image2pixbuf
+from src.backend.DeckManagement.InputIdentifier import Input
+from src.backend.PluginManager.ActionInputSupport import ActionInputSupport
 
 # Import actions
-from .actions.SimpleAction.SimpleAction import SimpleAction
+from .actions.AdjustVolume import AdjustVolume
 from .globals import Icons, Colors
 from .settings import PluginSettings
 
@@ -25,20 +27,27 @@ class PluginTemplate(PluginBase):
         # Register actions
         self.simple_action_holder = ActionHolder(
             plugin_base=self,
-            action_base=SimpleAction,
+            action_base=AdjustVolume,
             # Change this to your own plugin id
-            action_id="dev_core447_Template::SimpleAction",
-            action_name="Simple Action",
+            action_id="dev_axioms_pipewire::AdjustVolume",
+            action_name="Adjust Volume",
+            action_support={
+                Input.Key: ActionInputSupport.UNSUPPORTED,
+                Input.Dial: ActionInputSupport.SUPPORTED,
+                Input.Touchscreen: ActionInputSupport.UNSUPPORTED,
+            }
         )
+
         self.add_action_holder(self.simple_action_holder)
 
         # Register plugin
         self.register(
-            plugin_name="Template",
-            github_repo="https://github.com/StreamController/PluginTemplate",
+            plugin_name="Pipewire Application Mixer",
+            github_repo="https://github.com/Axioms/streamdeck-pipewire",
             plugin_version="1.0.0",
             app_version="1.1.1-alpha"
         )
+
 
     def init_vars(self):
         self.add_color(Colors.NORMAL, (0, 0, 0, 0))
@@ -52,3 +61,19 @@ class PluginTemplate(PluginBase):
         
     def get_settings_area(self):
         return self._settings_manager.get_settings_area()
+
+    def get_application_1(self):
+        settings = self.get_settings()
+        return settings.get("Application 1", "")
+
+    def get_application_2(self):
+        settings = self.get_settings()
+        return settings.get("Application 2", "")
+
+    def get_application_3(self):
+        settings = self.get_settings()
+        return settings.get("Application 3", "")
+
+    def get_application_4(self):
+        settings = self.get_settings()
+        return settings.get("Application 4", "")
