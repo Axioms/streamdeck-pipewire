@@ -1,6 +1,6 @@
 {
     "version": "1.0.2",
-    "thumbnail": "",
+    "thumbnail": "assets/info.png",
     "id": "streamdeck-pipewire",
     "name": "streamdeck pipewire"
 }
