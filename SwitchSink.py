@@ -35,14 +35,11 @@ if __name__ == "__main__":
             audioUtils.CreateLink(Game_FL, Default_FL)
             audioUtils.CreateLink(Game_FR, Default_FR)
         case "AppToSink":
-                gameAppNode = audioUtils.GetNodeFromPID(GetWindowPid())
+                gameAppNodes = audioUtils.GetNodeFromPID(GetWindowPid())
 
                 defaultNode = audioUtils.GetNodeID(DEFAULT_SINK_NAME)
                 Default_FL = audioUtils.GetChannel(defaultNode[0], audioUtils.Direction.IN, audioUtils.Channel.FRONT_LEFT)
                 Default_FR = audioUtils.GetChannel(defaultNode[0], audioUtils.Direction.IN, audioUtils.Channel.FRONT_RIGHT)
-
-                GameApp_FL = audioUtils.GetChannel(gameAppNode[0], audioUtils.Direction.OUT, audioUtils.Channel.FRONT_LEFT)
-                GameApp_FR = audioUtils.GetChannel(gameAppNode[0], audioUtils.Direction.OUT, audioUtils.Channel.FRONT_RIGHT)
 
                 Default_FL = audioUtils.GetChannel(defaultNode[0], audioUtils.Direction.IN, audioUtils.Channel.FRONT_LEFT)
                 Default_FR = audioUtils.GetChannel(defaultNode[0], audioUtils.Direction.IN, audioUtils.Channel.FRONT_RIGHT)
@@ -50,10 +47,14 @@ if __name__ == "__main__":
                 Game_FL = audioUtils.GetChannel(gameNode[0], audioUtils.Direction.IN, audioUtils.Channel.FRONT_LEFT)
                 Game_FR = audioUtils.GetChannel(gameNode[0], audioUtils.Direction.IN, audioUtils.Channel.FRONT_RIGHT)
 
-                audioUtils.RemoveLink(GameApp_FL, Default_FL)
-                audioUtils.RemoveLink(GameApp_FR, Default_FR)
+                for appNode in gameAppNodes:
+                    GameApp_FL = audioUtils.GetChannel(appNode, audioUtils.Direction.OUT, audioUtils.Channel.FRONT_LEFT)
+                    GameApp_FR = audioUtils.GetChannel(appNode, audioUtils.Direction.OUT, audioUtils.Channel.FRONT_RIGHT)
 
-                audioUtils.CreateLink(GameApp_FL, Game_FL)
-                audioUtils.CreateLink(GameApp_FR, Game_FR)
+                    audioUtils.RemoveLink(GameApp_FL, Default_FL)
+                    audioUtils.RemoveLink(GameApp_FR, Default_FR)
+
+                    audioUtils.CreateLink(GameApp_FL, Game_FL)
+                    audioUtils.CreateLink(GameApp_FR, Game_FR)
         case _:
             sys.exit(-1)

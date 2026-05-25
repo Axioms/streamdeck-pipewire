@@ -78,6 +78,7 @@ def GetNodeID(name: str) -> list[int]:
 
 
 def GetNodeFromPID(pid: int) -> list[int]:
+    Nodes = []
     try:
         output = subprocess.run(
             [
@@ -105,9 +106,13 @@ def GetNodeFromPID(pid: int) -> list[int]:
             regex = re.compile(regexPattern, re.MULTILINE)
             regexResult = re.findall(regex, output.stdout.decode("UTF-8"))
             if len(regexResult) > 0:
-                return [int(regexResult[0][0].split(",")[0][4:])]
+                Nodes.append(int(regexResult[0][0].split(",")[0][4:]))
     except:
+        if len(Nodes) > 0:
+            return Nodes
         return [-1]
+    if len(Nodes) > 0:
+        return Nodes
     return [-1]
 
 
