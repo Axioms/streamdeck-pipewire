@@ -88,7 +88,6 @@ def GetNodeFromPID(pid: int) -> list[int]:
             capture_output=True,
         )
         clients = output.stdout.decode("UTF-8")
-
         if clients.find(" ") > -1:
             clientsArray = clients.split(" ")
         else:
@@ -107,7 +106,7 @@ def GetNodeFromPID(pid: int) -> list[int]:
             regexResult = re.findall(regex, output.stdout.decode("UTF-8"))
             if len(regexResult) > 0:
                 Nodes.append(int(regexResult[0][0].split(",")[0][4:]))
-    except:
+    except Exception as e: 
         if len(Nodes) > 0:
             return Nodes
         return [-1]
