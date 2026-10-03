@@ -5,7 +5,7 @@ import audioUtils
 
 GAME_SINK_NAME = "game_sink"
 DEFAULT_SINK_NAME = (
-    "easyeffects_sink"
+    "alsa_output.usb-SteelSeries_Arctis_Nova_Pro_Wireless-00.iec958-stereo"
 )
 
 
